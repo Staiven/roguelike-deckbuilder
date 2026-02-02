@@ -1,0 +1,106 @@
+.game-over {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(180deg, #1a0a0a 0%, #2e1a1a 50%, #1a0a0a 100%);
+  overflow: hidden;
+}
+
+.game-over__overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+  pointer-events: none;
+}
+
+.game-over__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.game-over__title {
+  font-size: 5rem;
+  margin-bottom: 0.5rem;
+  color: #8b0000;
+  text-shadow: 0 0 40px rgba(139, 0, 0, 0.8), 0 0 80px rgba(139, 0, 0, 0.4);
+  animation: defeat-pulse 2s ease-in-out infinite;
+}
+
+@keyframes defeat-pulse {
+  0%, 100% { text-shadow: 0 0 40px rgba(139, 0, 0, 0.8), 0 0 80px rgba(139, 0, 0, 0.4); }
+  50% { text-shadow: 0 0 60px rgba(139, 0, 0, 1), 0 0 100px rgba(139, 0, 0, 0.6); }
+}
+
+.game-over__subtitle {
+  color: #888;
+  font-size: 1.3rem;
+  margin-bottom: 3rem;
+  font-style: italic;
+}
+
+.game-over__stats {
+  background: linear-gradient(135deg, #2a1a1a 0%, #1a0a0a 100%);
+  border: 2px solid #4a2a2a;
+  border-radius: 12px;
+  padding: 2rem 3rem;
+  margin-bottom: 2rem;
+}
+
+.game-over__stats-title {
+  font-size: 1.2rem;
+  color: #f0e6d3;
+  margin: 0 0 1.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.game-over__stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.game-over__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-over__stat-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #ff6b6b;
+  margin-bottom: 0.25rem;
+}
+
+.game-over__stat-label {
+  font-size: 0.85rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.game-over__retry {
+  background: linear-gradient(135deg, #8b0000 0%, #5a0000 100%);
+  border: 2px solid #aa2020;
+  border-radius: 8px;
+  padding: 1rem 3rem;
+  color: #f0e6d3;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.game-over__retry:hover {
+  transform: translateY(-3px);
+  border-color: #cc4040;
+  box-shadow: 0 10px 30px rgba(139, 0, 0, 0.5);
+}

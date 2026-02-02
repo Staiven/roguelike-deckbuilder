@@ -1,0 +1,132 @@
+.reward {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 100%);
+  overflow: hidden;
+}
+
+.reward__glow {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(255, 215, 0, 0.2) 0%, rgba(255, 200, 0, 0.1) 40%, transparent 70%);
+  pointer-events: none;
+  animation: reward-glow 3s ease-in-out infinite;
+}
+
+@keyframes reward-glow {
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+}
+
+.reward__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.reward__title {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+  color: #ffd700;
+  text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+  animation: title-appear 0.5s ease-out;
+}
+
+@keyframes title-appear {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.reward__subtitle {
+  color: #aaa;
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+}
+
+.reward__rewards {
+  margin-bottom: 2rem;
+}
+
+.reward__section {
+  background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+  border: 2px solid #3a3a5e;
+  border-radius: 12px;
+  padding: 1.5rem 3rem;
+}
+
+.reward__section-title {
+  font-size: 1.2rem;
+  color: #f0e6d3;
+  margin: 0 0 1rem 0;
+}
+
+.reward__items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reward__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reward__item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.reward__item--gold {
+  border-left: 3px solid #ffd700;
+}
+
+.reward__item--card {
+  border-left: 3px solid #6a6aff;
+}
+
+.reward__item-icon {
+  font-size: 1.5rem;
+}
+
+.reward__item-text {
+  color: #f0e6d3;
+}
+
+.reward__skip {
+  background: linear-gradient(135deg, #4a4a6e 0%, #3a3a5e 100%);
+  border: 2px solid #5a5a8e;
+  border-radius: 8px;
+  padding: 1rem 3rem;
+  color: #f0e6d3;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reward__skip:hover:not(:disabled) {
+  transform: translateY(-3px);
+  border-color: #6a6aff;
+  box-shadow: 0 8px 20px rgba(106, 106, 255, 0.3);
+}
+
+.reward__skip:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

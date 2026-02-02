@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for f in src/data/cards/starter_cards.py src/data/cards/common_cards.py src/data/enemies/act1_enemies.py src/data/relics/common_relics.py src/combat/status_effects.py src/map/map_node.py)",
+      "Bash(do)",
+      "Bash(if ! grep -q \"from __future__ import annotations\" \"$f\")",
+      "Bash(then)",
+      "Bash(fi)",
+      "Bash(while [ ! -d \"/Users/stevenqu/rogue_project/frontend/src\" ])",
+      "Bash(do sleep 2)",
+      "Bash(while [ ! -d \"/Users/stevenqu/rogue_project/frontend/src/components\" ])",
+      "Bash(do sleep 1)",
+      "Bash(timeout 5 uvicorn:*)",
+      "Bash(while [ ! -f \"/Users/stevenqu/rogue_project/frontend/src/types/index.ts\" ])",
+      "Bash(npx tsc:*)",
+      "Bash(xcode-select:*)"
+    ]
+  }
+}
