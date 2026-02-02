@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { Card as CardType } from '../types';
 import Card from './Card';
 import '../styles/combat.css';
@@ -20,7 +20,6 @@ export const Hand: React.FC<HandProps> = ({
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [prevCardIds, setPrevCardIds] = useState<Set<string>>(new Set());
   const [newCardIds, setNewCardIds] = useState<Set<string>>(new Set());
-  const controls = useAnimation();
 
   // Track which cards are new (for draw animation)
   useEffect(() => {

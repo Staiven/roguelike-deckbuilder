@@ -84,7 +84,7 @@ export const Card: React.FC<CardProps> = ({
   };
 
   // Animation variants
-  const cardVariants = {
+  const cardVariants: Record<string, any> = {
     initial: isNew ? {
       x: -300,
       y: -200,

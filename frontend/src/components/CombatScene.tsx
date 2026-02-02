@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useGameStore } from '../store/gameStore';
-import type { Card as CardType, TargetType } from '../types';
+import type { Card as CardType } from '../types';
 import Hand from './Hand';
 import Enemy from './Enemy';
 import Player from './Player';

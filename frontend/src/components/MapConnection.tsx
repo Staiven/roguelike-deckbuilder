@@ -17,11 +17,6 @@ export function MapConnection({ from, to, visited, index = 0 }: MapConnectionPro
   // Calculate the path
   const pathD = `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
 
-  // Calculate path length for animation
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const length = Math.sqrt(dx * dx + dy * dy);
-
   return (
     <motion.path
       d={pathD}

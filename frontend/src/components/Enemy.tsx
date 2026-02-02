@@ -111,7 +111,7 @@ export const Enemy: React.FC<EnemyProps> = ({
   }, [enemy.currentHp, controls, prevHp]);
 
   // Animation variants
-  const enemyVariants = {
+  const enemyVariants: Record<string, any> = {
     initial: {
       scale: 0,
       opacity: 0,
@@ -150,7 +150,7 @@ export const Enemy: React.FC<EnemyProps> = ({
     } : {},
   };
 
-  const intentVariants = {
+  const intentVariants: Record<string, any> = {
     initial: { y: -20, opacity: 0 },
     animate: {
       y: 0,
@@ -171,7 +171,7 @@ export const Enemy: React.FC<EnemyProps> = ({
     }
   };
 
-  const blockVariants = {
+  const blockVariants: Record<string, any> = {
     initial: { scale: 0, opacity: 0 },
     animate: {
       scale: 1,
