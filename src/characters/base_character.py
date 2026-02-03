@@ -67,21 +67,21 @@ MAGE = CharacterDefinition(
 )
 
 
-# Rogue character definition
-ROGUE = CharacterDefinition(
-    character_class=CharacterClass.ROGUE,
-    name="Defect",
-    description="A combat automaton that channels energy through orbs.",
-    max_hp=75,
-    starting_gold=99,
-    max_energy=3,
-)
+# Rogue character definition (Coming Soon - needs orb system)
+# ROGUE = CharacterDefinition(
+#     character_class=CharacterClass.ROGUE,
+#     name="Defect",
+#     description="A combat automaton that channels energy through orbs.",
+#     max_hp=75,
+#     starting_gold=99,
+#     max_energy=3,
+# )
 
 
 CHARACTER_REGISTRY: dict[CharacterClass, CharacterDefinition] = {
     CharacterClass.WARRIOR: WARRIOR,
     CharacterClass.MAGE: MAGE,
-    CharacterClass.ROGUE: ROGUE,
+    # CharacterClass.ROGUE: ROGUE,  # Coming Soon - needs orb system implementation
 }
 
 

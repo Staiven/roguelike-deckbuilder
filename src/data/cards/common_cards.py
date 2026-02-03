@@ -159,14 +159,14 @@ THUNDERCLAP = CardData(
 BLADE_DANCE = CardData(
     id="blade_dance",
     name="Blade Dance",
-    card_type=CardType.SKILL,
+    card_type=CardType.ATTACK,
     rarity=CardRarity.COMMON,
-    target_type=TargetType.NONE,
+    target_type=TargetType.RANDOM_ENEMY,
     base_cost=1,
-    base_effects=[],  # Would add shivs to hand
-    description="Add 3 Shivs to your hand.",
-    upgraded_effects=[],
-    upgraded_description="Add 4 Shivs to your hand.",
+    base_effects=[DamageEffect(base_damage=4, times=3)],
+    description="Deal 4 damage to a random enemy 3 times.",
+    upgraded_effects=[DamageEffect(base_damage=4, times=4)],
+    upgraded_description="Deal 4 damage to a random enemy 4 times.",
 )
 
 DEADLY_POISON = CardData(
