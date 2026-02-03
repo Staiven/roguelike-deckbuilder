@@ -103,20 +103,24 @@ class CombatManager:
         self.state = CombatState(player=player, enemies=enemies)
         self.draw_count = draw_count
 
-        # Initialize combat state
-        player.start_combat()
+        # Initialize deck manager first
         self.state.deck_manager.initialize_from_deck(player.master_deck)
-        self.state.energy_system.initialize(player)
 
-        # Emit combat start event
-        self.event_bus.emit(GameEvent.combat_start(player, enemies))
+        # Initialize combat state (pass deck_manager for relics that need to draw)
+        player.start_combat(self.state.deck_manager)
+        self.state.energy_system.initialize(player)
 
         # Set up enemy intents
         for enemy in enemies:
             enemy.choose_intent(self.state)
 
-        # Start first turn
+        # Start first turn (resets block, refreshes energy, draws cards)
         self._start_player_turn()
+
+        # Subscribe relics and emit combat start AFTER first turn setup
+        # This ensures relics like Anchor (block at combat start) work correctly
+        self._subscribe_relics(player)
+        self.event_bus.emit(GameEvent.combat_start(player, enemies, self.state.deck_manager))
 
         return self.state
 
@@ -347,6 +351,7 @@ class CombatManager:
             self.state.result = CombatResult.VICTORY
             self.state.phase = CombatPhase.COMBAT_END
             self.event_bus.emit(GameEvent.combat_end(victory=True))
+            self._unsubscribe_relics(self.state.player)
             return
 
         # Check for defeat
@@ -354,6 +359,25 @@ class CombatManager:
             self.state.result = CombatResult.DEFEAT
             self.state.phase = CombatPhase.COMBAT_END
             self.event_bus.emit(GameEvent.combat_end(victory=False))
+            self._unsubscribe_relics(self.state.player)
+
+    def _subscribe_relics(self, player: Player) -> None:
+        """Subscribe player's relics to the event bus for this combat."""
+        for relic in player.relics:
+            event_type = relic.data.get_event_type()
+            if event_type is not None and relic.data.effect is not None:
+                handler = relic.create_event_handler(player)
+                relic.event_subscription_id = self.event_bus.subscribe(event_type, handler)
+                # Reset counter-based relics at combat start
+                if relic.data.counter_based:
+                    relic.reset_counter()
+
+    def _unsubscribe_relics(self, player: Player) -> None:
+        """Unsubscribe player's relics from the event bus after combat."""
+        for relic in player.relics:
+            if relic.event_subscription_id is not None:
+                self.event_bus.unsubscribe(relic.event_subscription_id)
+                relic.event_subscription_id = None
 
     def get_combat_summary(self) -> dict[str, Any]:
         """Get a summary of the current combat state."""

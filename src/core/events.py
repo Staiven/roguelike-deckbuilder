@@ -68,8 +68,12 @@ class GameEvent:
     data: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
-    def combat_start(cls, player: Player, enemies: list[Enemy]) -> GameEvent:
-        return cls(EventType.COMBAT_START, {"player": player, "enemies": enemies})
+    def combat_start(cls, player: Player, enemies: list[Enemy], deck_manager: Any = None) -> GameEvent:
+        return cls(EventType.COMBAT_START, {
+            "player": player,
+            "enemies": enemies,
+            "deck_manager": deck_manager,
+        })
 
     @classmethod
     def combat_end(cls, victory: bool) -> GameEvent:
@@ -108,8 +112,13 @@ class GameEvent:
         return cls(EventType.ENEMY_DIED, {"enemy": enemy})
 
     @classmethod
-    def hp_lost(cls, entity: Any, amount: int) -> GameEvent:
-        return cls(EventType.HP_LOST, {"entity": entity, "amount": amount})
+    def hp_lost(cls, entity: Any, amount: int, deck_manager: Any = None) -> GameEvent:
+        return cls(EventType.HP_LOST, {"entity": entity, "amount": amount, "deck_manager": deck_manager})
+
+    @classmethod
+    def rest_site_used(cls, player: Any, action: str) -> GameEvent:
+        """Event emitted when a rest site is used (for relics like Ancient Tea Set)."""
+        return cls(EventType.REST_SITE_USED, {"player": player, "action": action})
 
     @classmethod
     def shuffle(cls) -> GameEvent:

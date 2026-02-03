@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from src.core.enums import StatusEffectType
+from src.core.events import get_event_bus, GameEvent
 
 if TYPE_CHECKING:
     from src.entities.card import CardInstance
@@ -38,6 +39,9 @@ class Player:
     damage_dealt_this_combat: int = 0
     damage_taken_this_combat: int = 0
 
+    # Combat runtime state (not persisted)
+    _deck_manager: Any = field(default=None, repr=False)
+
     def is_alive(self) -> bool:
         """Check if the player is still alive."""
         return self.current_hp > 0
@@ -67,6 +71,11 @@ class Player:
         self.current_hp -= remaining
         self.current_hp = max(0, self.current_hp)
         self.damage_taken_this_combat += remaining
+
+        # Emit HP_LOST event for relics like Centennial Puzzle
+        if remaining > 0:
+            event_bus = get_event_bus()
+            event_bus.emit(GameEvent.hp_lost(self, remaining, self._deck_manager))
 
         return remaining
 
@@ -169,18 +178,21 @@ class Player:
                 if self.status_effects[effect_type] <= 0:
                     del self.status_effects[effect_type]
 
-    def start_combat(self) -> None:
+    def start_combat(self, deck_manager: Any = None) -> None:
         """Called at the start of combat."""
         self.block = 0
         self.status_effects.clear()
         self.cards_played_this_combat = 0
         self.damage_dealt_this_combat = 0
         self.damage_taken_this_combat = 0
+        # Store deck_manager reference for relics that need to draw cards
+        self._deck_manager = deck_manager
 
     def end_combat(self) -> None:
         """Called at the end of combat."""
         self.block = 0
         self.status_effects.clear()
+        self._deck_manager = None
 
     def __str__(self) -> str:
         return f"{self.name} (HP: {self.current_hp}/{self.max_hp}, Gold: {self.gold})"

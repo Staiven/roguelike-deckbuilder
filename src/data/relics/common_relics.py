@@ -33,9 +33,9 @@ BURNING_BLOOD = RelicData(
 
 def _ring_of_snake_effect(relic: RelicInstance, event: GameEvent, player: Player) -> None:
     """Draw 2 extra cards at the start of combat."""
-    # This would need to integrate with the deck manager
-    # For now, we'll mark that it happened
-    pass
+    deck_manager = event.data.get("deck_manager")
+    if deck_manager is not None:
+        deck_manager.draw(2)
 
 
 RING_OF_THE_SNAKE = RelicData(
@@ -79,8 +79,10 @@ ANCHOR = RelicData(
 
 def _ancient_tea_set_effect(relic: RelicInstance, event: GameEvent, player: Player) -> None:
     """Gain 2 energy on the first turn after resting."""
-    # This would need to track whether we just rested
-    pass
+    # Counter is set to 1 when resting, then gives energy at next combat start
+    if relic.counter > 0:
+        player.energy += 2
+        relic.reset_counter()
 
 
 ANCIENT_TEA_SET = RelicData(
@@ -146,8 +148,12 @@ BRONZE_SCALES = RelicData(
 
 def _centennial_puzzle_effect(relic: RelicInstance, event: GameEvent, player: Player) -> None:
     """Draw 3 cards the first time you take damage each combat."""
-    # Would need to track first damage taken
-    pass
+    # Counter tracks if already triggered this combat (reset at combat start)
+    if relic.counter == 0:
+        relic.increment_counter()
+        # Access deck_manager through player's combat reference
+        if hasattr(player, '_deck_manager') and player._deck_manager is not None:
+            player._deck_manager.draw(3)
 
 
 CENTENNIAL_PUZZLE = RelicData(
