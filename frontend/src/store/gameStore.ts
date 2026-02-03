@@ -1,14 +1,35 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type { FullGameState } from '../types';
 import * as api from '../api/client';
 
+interface UserState {
+  userId: number | null;
+  username: string | null;
+  hasSave: boolean;
+}
+
 interface GameStore {
+  // User state
+  user: UserState;
+
+  // Game state
   gameState: FullGameState | null;
   loading: boolean;
   error: string | null;
   selectedCard: number | null;
 
-  // Actions
+  // Auth actions
+  login: (username: string) => Promise<void>;
+  logout: () => void;
+
+  // Save actions
+  saveGame: () => Promise<void>;
+  loadGame: () => Promise<void>;
+  deleteSave: () => Promise<void>;
+  refreshSaveInfo: () => Promise<void>;
+
+  // Game actions
   startNewGame: (characterClass: 'warrior' | 'mage') => Promise<void>;
   refreshState: () => Promise<void>;
   moveToNode: (row: number, col: number) => Promise<void>;
@@ -21,21 +42,104 @@ interface GameStore {
   setError: (error: string | null) => void;
 }
 
-export const useGameStore = create<GameStore>((set, get) => ({
-  gameState: null,
-  loading: false,
-  error: null,
-  selectedCard: null,
+export const useGameStore = create<GameStore>()(
+  persist(
+    (set, get) => ({
+      // Initial state
+      user: { userId: null, username: null, hasSave: false },
+      gameState: null,
+      loading: false,
+      error: null,
+      selectedCard: null,
 
-  startNewGame: async (characterClass) => {
-    set({ loading: true, error: null });
-    try {
-      const state = await api.createGame(characterClass);
-      set({ gameState: state, loading: false });
-    } catch (e) {
-      set({ error: (e as Error).message, loading: false });
-    }
-  },
+      // Auth actions
+      login: async (username) => {
+        set({ loading: true, error: null });
+        try {
+          const response = await api.login(username);
+          set({
+            user: {
+              userId: response.user_id,
+              username: response.username,
+              hasSave: response.has_save,
+            },
+            loading: false,
+          });
+        } catch (e) {
+          set({ error: (e as Error).message, loading: false });
+        }
+      },
+
+      logout: () => {
+        set({
+          user: { userId: null, username: null, hasSave: false },
+          gameState: null,
+        });
+      },
+
+      // Save actions
+      saveGame: async () => {
+        const { gameState, user } = get();
+        if (!gameState || !user.userId) return;
+        set({ loading: true, error: null });
+        try {
+          await api.saveGame(gameState.sessionId, user.userId);
+          set({ user: { ...user, hasSave: true }, loading: false });
+        } catch (e) {
+          set({ error: (e as Error).message, loading: false });
+        }
+      },
+
+      loadGame: async () => {
+        const { user } = get();
+        if (!user.userId) return;
+        set({ loading: true, error: null });
+        try {
+          const response = await api.loadGame(user.userId);
+          if (response.success && response.game_state) {
+            const gameState = api.transformLoadedGameState(response.game_state);
+            set({ gameState, loading: false });
+          } else {
+            set({ error: 'No save found', loading: false });
+          }
+        } catch (e) {
+          set({ error: (e as Error).message, loading: false });
+        }
+      },
+
+      deleteSave: async () => {
+        const { user } = get();
+        if (!user.userId) return;
+        set({ loading: true, error: null });
+        try {
+          await api.deleteSave(user.userId);
+          set({ user: { ...user, hasSave: false }, loading: false });
+        } catch (e) {
+          set({ error: (e as Error).message, loading: false });
+        }
+      },
+
+      refreshSaveInfo: async () => {
+        const { user } = get();
+        if (!user.userId) return;
+        try {
+          const info = await api.getSaveInfo(user.userId);
+          set({ user: { ...user, hasSave: info.has_save } });
+        } catch (e) {
+          // Ignore errors when refreshing save info
+        }
+      },
+
+      // Game actions
+      startNewGame: async (characterClass) => {
+        set({ loading: true, error: null });
+        try {
+          const state = await api.createGame(characterClass);
+          set({ gameState: state, loading: false });
+        } catch (e) {
+          set({ error: (e as Error).message, loading: false });
+        }
+      },
 
   refreshState: async () => {
     const { gameState } = get();
@@ -123,4 +227,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   setError: (error) => set({ error }),
-}));
+    }),
+    {
+      name: 'rogue-game-user',
+      partialize: (state) => ({ user: state.user }),
+    }
+  )
+);

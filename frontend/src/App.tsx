@@ -1,4 +1,5 @@
 import { useGameStore } from './store/gameStore';
+import { Login } from './components/Login';
 import { CharacterSelect } from './components/CharacterSelect';
 import { MapView } from './components/MapView';
 import { CombatScene } from './components/CombatScene';
@@ -9,9 +10,14 @@ import { Victory } from './components/Victory';
 import './styles/app.css';
 
 function App() {
-  const { gameState, loading, error, setError } = useGameStore();
+  const { gameState, loading, error, setError, user, saveGame } = useGameStore();
 
   const renderScreen = () => {
+    // If not logged in, show login screen
+    if (!user.userId) {
+      return <Login />;
+    }
+
     // If no game state, show character select (main menu)
     if (!gameState) {
       return <CharacterSelect />;
@@ -101,6 +107,15 @@ function App() {
               {gameState.floor}
             </span>
           </div>
+          {user.userId && gameState.state === 'map' && (
+            <button
+              className="game-info-bar__save-btn"
+              onClick={() => saveGame()}
+              disabled={loading}
+            >
+              Save Game
+            </button>
+          )}
         </div>
       )}
     </div>

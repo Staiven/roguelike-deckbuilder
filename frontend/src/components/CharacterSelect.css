@@ -5,13 +5,110 @@
   justify-content: center;
   min-height: 100vh;
   padding: 2rem;
+  position: relative;
+}
+
+.character-select__header {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.character-select__user {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.character-select__logout {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  background: transparent;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.character-select__logout:hover {
+  border-color: #888;
+  color: #f0e6d3;
 }
 
 .character-select__title {
   font-size: 2.5rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   color: #f0e6d3;
   text-shadow: 0 0 10px rgba(255, 200, 100, 0.3);
+}
+
+.character-select__continue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.continue-button {
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+  border: 2px solid #4caf50;
+  border-radius: 8px;
+  color: #f0e6d3;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.continue-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.continue-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.delete-save-button {
+  padding: 0.4rem 1rem;
+  font-size: 0.8rem;
+  background: transparent;
+  border: 1px solid #666;
+  border-radius: 4px;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-save-button:hover:not(:disabled) {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.character-select__divider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  margin: 1rem 0 2rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.character-select__divider::before,
+.character-select__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #3a3a5e;
+  margin: 0 1rem;
 }
 
 .character-select__grid {

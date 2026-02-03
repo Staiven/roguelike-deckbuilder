@@ -212,3 +212,90 @@ export async function skipReward(sessionId: string): Promise<FullGameState> {
   const data = await response.json();
   return transformGameState(data);
 }
+
+// Auth API
+
+export interface LoginResponse {
+  success: boolean;
+  user_id: number;
+  username: string;
+  has_save: boolean;
+}
+
+export async function login(username: string): Promise<LoginResponse> {
+  const response = await fetch(`${API_BASE}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username }),
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: response.statusText }));
+    throw new Error(error.detail || `Failed to login: ${response.statusText}`);
+  }
+  return response.json();
+}
+
+// Save API
+
+export interface SaveInfo {
+  has_save: boolean;
+  character_class?: string;
+  character_name?: string;
+  act?: number;
+  floor?: number;
+  current_hp?: number;
+  max_hp?: number;
+  updated_at?: string;
+}
+
+export async function saveGame(sessionId: string, userId: number): Promise<{ success: boolean }> {
+  const response = await fetch(`${API_BASE}/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-User-Id': String(userId),
+    },
+    body: JSON.stringify({ session_id: sessionId }),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to save game: ${response.statusText}`);
+  }
+  return response.json();
+}
+
+export async function loadGame(userId: number): Promise<{ success: boolean; session_id?: string; game_state?: any }> {
+  const response = await fetch(`${API_BASE}/save/load`, {
+    method: 'POST',
+    headers: { 'X-User-Id': String(userId) },
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to load game: ${response.statusText}`);
+  }
+  return response.json();
+}
+
+export async function getSaveInfo(userId: number): Promise<SaveInfo> {
+  const response = await fetch(`${API_BASE}/save/info`, {
+    headers: { 'X-User-Id': String(userId) },
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to get save info: ${response.statusText}`);
+  }
+  return response.json();
+}
+
+export async function deleteSave(userId: number): Promise<{ success: boolean }> {
+  const response = await fetch(`${API_BASE}/save`, {
+    method: 'DELETE',
+    headers: { 'X-User-Id': String(userId) },
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to delete save: ${response.statusText}`);
+  }
+  return response.json();
+}
+
+// Helper to transform loaded game state
+export function transformLoadedGameState(data: any): FullGameState {
+  return transformGameState(data);
+}

@@ -30,7 +30,7 @@ const characters: CharacterOption[] = [
 ];
 
 export function CharacterSelect() {
-  const { startNewGame, loading } = useGameStore();
+  const { startNewGame, loadGame, deleteSave, logout, loading, user } = useGameStore();
 
   const handleSelect = (characterId: 'warrior' | 'mage') => {
     if (!loading) {
@@ -38,9 +38,56 @@ export function CharacterSelect() {
     }
   };
 
+  const handleContinue = () => {
+    if (!loading) {
+      loadGame();
+    }
+  };
+
+  const handleDeleteSave = () => {
+    if (!loading && confirm('Delete your saved game?')) {
+      deleteSave();
+    }
+  };
+
   return (
     <div className="character-select">
-      <h1 className="character-select__title">Choose Your Character</h1>
+      <div className="character-select__header">
+        <span className="character-select__user">Playing as: {user.username}</span>
+        <button className="character-select__logout" onClick={logout}>
+          Logout
+        </button>
+      </div>
+
+      <h1 className="character-select__title">
+        {user.hasSave ? 'Continue or Start New?' : 'Choose Your Character'}
+      </h1>
+
+      {user.hasSave && (
+        <div className="character-select__continue">
+          <button
+            className="continue-button"
+            onClick={handleContinue}
+            disabled={loading}
+          >
+            Continue Saved Game
+          </button>
+          <button
+            className="delete-save-button"
+            onClick={handleDeleteSave}
+            disabled={loading}
+          >
+            Delete Save
+          </button>
+        </div>
+      )}
+
+      {user.hasSave && (
+        <div className="character-select__divider">
+          <span>or start a new game</span>
+        </div>
+      )}
+
       <div className="character-select__grid">
         {characters.map((char) => (
           <button
@@ -65,7 +112,7 @@ export function CharacterSelect() {
           </button>
         ))}
       </div>
-      {loading && <div className="character-select__loading">Starting game...</div>}
+      {loading && <div className="character-select__loading">Loading...</div>}
     </div>
   );
 }

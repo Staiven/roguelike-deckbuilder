@@ -122,6 +122,28 @@
   color: #ffd700;
 }
 
+.game-info-bar__save-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+  border: 1px solid #4caf50;
+  border-radius: 4px;
+  color: #f0e6d3;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 1rem;
+}
+
+.game-info-bar__save-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+}
+
+.game-info-bar__save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Placeholder Screen */
 .placeholder-screen {
   display: flex;
