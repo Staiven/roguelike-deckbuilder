@@ -36,6 +36,9 @@ frontend/.env.local
 htmlcov/
 .pytest_cache/
 
+# Database
+*.db
+
 # Misc
 *.bak
 *.tmp

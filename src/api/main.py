@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 import uuid
+from contextlib import asynccontextmanager
 from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.api.database import init_db
+from src.api.routes.auth import router as auth_router
+from src.api.routes.saves import router as saves_router, set_sessions_ref
 from src.api.schemas import (
     # Enums
     CardTypeEnum,
@@ -45,10 +49,19 @@ from src.combat.combat_manager import CombatResult, CombatPhase
 sessions: Dict[str, GameSession] = {}
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Initialize database on startup."""
+    init_db()
+    set_sessions_ref(sessions)
+    yield
+
+
 app = FastAPI(
     title="Roguelike Deck-Builder API",
     description="Backend API for the roguelike deck-builder game",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 # Add CORS middleware - allow all origins for deployment
@@ -59,6 +72,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Register auth and save routes
+app.include_router(auth_router)
+app.include_router(saves_router)
 
 
 # Helper functions to convert game objects to response models
