@@ -180,6 +180,30 @@ class TestAuthEndpoints:
 
         assert response.status_code == 400
 
+    def test_login_user_limit(self, client):
+        """Test that user limit is enforced."""
+        import src.api.database as db_module
+
+        # Set a low limit for testing
+        original_limit = db_module.MAX_USERS
+        db_module.MAX_USERS = 2
+
+        try:
+            # Create users up to the limit
+            client.post("/api/auth/login", json={"username": "user1"})
+            client.post("/api/auth/login", json={"username": "user2"})
+
+            # Third user should be rejected
+            response = client.post("/api/auth/login", json={"username": "user3"})
+            assert response.status_code == 503
+            assert "Maximum number of users" in response.json()["detail"]
+
+            # Existing user should still be able to login
+            response = client.post("/api/auth/login", json={"username": "user1"})
+            assert response.status_code == 200
+        finally:
+            db_module.MAX_USERS = original_limit
+
 
 class TestSaveEndpoints:
     """Test save/load endpoints."""

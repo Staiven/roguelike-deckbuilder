@@ -9,6 +9,9 @@ from typing import Generator, Optional
 # Database path - can be overridden by environment variable
 DATABASE_PATH = os.environ.get("DATABASE_PATH", "game_saves.db")
 
+# Maximum number of users allowed
+MAX_USERS = int(os.environ.get("MAX_USERS", "100"))
+
 
 def get_db_path() -> str:
     """Get the database file path."""
@@ -61,6 +64,19 @@ def init_db() -> None:
 
 
 # User operations
+
+def get_user_count() -> int:
+    """Get the total number of users."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM users")
+        return cursor.fetchone()[0]
+
+
+def is_user_limit_reached() -> bool:
+    """Check if the maximum user limit has been reached."""
+    return get_user_count() >= MAX_USERS
+
 
 def get_user_by_username(username: str) -> Optional[dict]:
     """Get a user by username."""

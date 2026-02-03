@@ -3,7 +3,13 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from src.api.database import get_or_create_user, has_save
+from src.api.database import (
+    get_or_create_user,
+    has_save,
+    get_user_by_username,
+    is_user_limit_reached,
+    MAX_USERS,
+)
 
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -37,6 +43,16 @@ def login(request: LoginRequest) -> LoginResponse:
 
     if len(username) > 50:
         raise HTTPException(status_code=400, detail="Username too long (max 50 characters)")
+
+    # Check if user exists first
+    existing_user = get_user_by_username(username)
+
+    # If new user, check the limit
+    if not existing_user and is_user_limit_reached():
+        raise HTTPException(
+            status_code=503,
+            detail=f"Maximum number of users ({MAX_USERS}) reached. Please try again later."
+        )
 
     user = get_or_create_user(username)
     user_has_save = has_save(user["id"])
